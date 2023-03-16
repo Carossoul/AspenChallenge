@@ -1,0 +1,234 @@
+  
+  
+
+----------------DATABASE CREATION ------------
+Create Database AspenChallenge;
+Use AspenChallenge; 
+
+----------------START TABLES------------
+Create Table Departments(
+ Id_Department int IDENTITY(1,1),
+ Name nvarchar(255),
+ Description nvarchar(255),
+ Status bit not null,
+ Created_at Datetime ,
+ Updated_at Datetime ,
+ Created_by char(30),
+ Primary Key(Id_Department)
+)
+Create Table Users(
+ Id_User int IDENTITY(1,1),
+ First_Name nvarchar(255),
+ Last_Name nvarchar(255),
+ Start_Date Datetime not null,
+ End_Date Datetime ,  
+ Created_at Datetime ,
+ Updated_at Datetime ,
+ Last_login Datetime,
+ Active bit,
+ Created_by char(30),
+ Primary Key(Id_User)
+) 
+Create Table Roles(
+ Id_Role int IDENTITY(1,1),
+ Name nvarchar(255),
+ Start_Date Datetime not null,
+ End_Date Datetime ,
+ Created_at Datetime ,
+ Updated_at Datetime ,
+ Active bit,
+ Created_by char(30),
+ Primary Key(Id_Role)
+)
+
+Create Table User_Department(
+ Id int IDENTITY(1,1),
+ Id_User int not null,
+ Id_Department int not null,
+ Created_at Datetime ,
+ Updated_at Datetime ,
+ Active bit,
+ Created_by char(30),
+ Primary Key(Id),
+ Foreign Key (Id_User) References Users(Id_User),
+ Foreign Key (Id_Department) References Departments(Id_Department)
+)
+ Create Table User_Role(
+ Id int IDENTITY(1,1),
+ Id_User int not null,
+ Id_Role int not null,
+ Created_at Datetime ,
+ Updated_at Datetime ,
+ Active bit,
+ Created_by char(30),
+ Primary Key(Id),
+ Foreign Key (Id_User) References Users(Id_User),
+ Foreign Key (Id_Role) References Roles(Id_Role)
+)
+
+
+
+----------------END TABLES------------ 
+
+----------------START TRIGGERS------------
+GO
+CREATE TRIGGER tr_OnCreateDepartment
+   ON  Departments
+   AFTER Insert
+AS 
+BEGIN 
+	SET NOCOUNT ON;
+	Update Departments set Created_at= GETDATE(),Created_by=CURRENT_USER where Id_Department= @@IDENTITY; 
+
+END
+----------
+GO
+CREATE TRIGGER tr_OnCreateUsers
+   ON  Users
+   AFTER Insert
+AS 
+BEGIN 
+	SET NOCOUNT ON;
+	Update Users set Created_at= GETDATE(),Created_by=CURRENT_USER where Id_User= @@IDENTITY; 
+
+END
+---------
+GO
+CREATE TRIGGER tr_OnCreateRoles
+   ON  Roles
+   AFTER Insert
+AS 
+BEGIN 
+	SET NOCOUNT ON;
+	Update Roles set Created_at= GETDATE(),Created_by=CURRENT_USER where Id_Role= @@IDENTITY; 
+
+END
+--------------
+GO
+CREATE TRIGGER tr_OnCreateUser_Role
+   ON  User_Role
+   AFTER Insert
+AS 
+BEGIN 
+	SET NOCOUNT ON;
+	Update User_Role set Created_at= GETDATE(),Created_by=CURRENT_USER where Id= @@IDENTITY; 
+
+END
+------------ 
+GO
+CREATE TRIGGER tr_OnCreateUser_Department
+   ON  User_Department
+   AFTER Insert
+AS 
+BEGIN 
+	SET NOCOUNT ON;
+	Update User_Department set Created_at= GETDATE(),Created_by=CURRENT_USER where Id= @@IDENTITY; 
+
+END
+-----------------END INSERT TRIGGERS
+GO
+CREATE TRIGGER tr_OnUpdateDepartment
+   ON  Departments
+   AFTER Update
+AS 
+BEGIN 
+	SET NOCOUNT ON;
+	Update Departments set Updated_at= GETDATE() where Id_Department= @@IDENTITY; 
+
+END
+----------
+GO
+CREATE TRIGGER tr_OnUpdateUsers
+   ON  Users
+   AFTER Update
+AS 
+BEGIN 
+	SET NOCOUNT ON;
+	Update Users set Updated_at= GETDATE() where Id_User= @@IDENTITY; 
+
+END
+---------
+GO
+CREATE TRIGGER tr_OnUpdateRoles
+   ON  Roles
+   AFTER Update
+AS 
+BEGIN 
+	SET NOCOUNT ON;
+	Update Roles set Updated_at= GETDATE() where Id_Role= @@IDENTITY; 
+
+END
+--------------
+GO
+CREATE TRIGGER tr_OnUpdateUser_Role
+   ON  User_Role
+   AFTER Update
+AS 
+BEGIN 
+	SET NOCOUNT ON;
+	Update User_Role set Updated_at= GETDATE() where Id= @@IDENTITY; 
+
+END
+------------ 
+GO
+CREATE TRIGGER tr_OnUpdateUser_Department
+   ON  User_Department
+   AFTER Update
+AS 
+BEGIN 
+	SET NOCOUNT ON;
+	Update User_Department set Updated_at= GETDATE() where Id= @@IDENTITY; 
+
+END
+
+
+----------------END TRIGGERS------------
+
+----------------START  INSERTIONS------------
+GO
+Insert into Departments(Name,Description,Status)
+Values('IT','This is the thecnology department',1)
+
+
+
+Insert into Users(First_Name,Last_Name,Start_Date,Last_login,Active)
+Values('Oscar','Avila Ponce',GETDATE(),GETDATE(),1)
+
+
+
+Insert into Roles(Name,Start_Date,Active)
+Values('Net Developer',GETDATE(),1);
+
+  
+Insert into User_Department(Id_User,Id_Department,Active)
+Values(1,1,1);
+
+
+Insert into User_Role(Id_User,Id_Role,Active)
+Values(1,1,1);   
+
+----------------END  INSERTIONS------------
+
+----------------STRART  UPDATES------------
+
+
+Update Departments set Name = 'TI',Description='This is NOT the it department', Status=0 where Id_Department=1;
+
+Update Roles set Name = 'SQL Developer', Active=0  where Id_Role=1;
+
+Update Users set First_Name = 'RACSO',Last_login=GETDATE(), Active=0 where Id_User=1;
+
+Update User_Role set Active = 0 where Id=1
+ 
+Update User_Department set Active = 0 where Id=1
+
+
+----------------END UPDATES------------
+
+----------------START DROP STATEMENTS-------------
+--Drop table User_Department;
+--Drop table User_Role; 
+--Drop table Departments;
+--Drop table Users;
+--Drop table Roles;
+----------------END DROP STATEMENTS-------------
